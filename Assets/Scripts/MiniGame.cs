@@ -13,10 +13,18 @@ public class MiniGame : MonoBehaviour
     }
 
     public GameObject EKeyButton;
+
+    private void Update()
+    {
+        if(miniGameOn)
+        {
+            EKeyButton.SetActive(false);
+        }
+    }
+
     public void AbortButton()
     {
         miniGameOn = false;
         gameObject.SetActive(false);
-        EKeyButton.SetActive(false);
     }
 }
