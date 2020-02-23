@@ -78,6 +78,6 @@ public class MiniGame : MonoBehaviour
     {
         miniGameOn = false;
         gameObject.SetActive(false);
-        PlayerPack.SetActive(true);
+        //PlayerPack.SetActive(true);
     }
 }

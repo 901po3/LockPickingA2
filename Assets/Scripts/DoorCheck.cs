@@ -26,7 +26,7 @@ public class DoorCheck : MonoBehaviour
                         Panel.GetComponent<MiniGame>().miniGameOn = true;
                         Panel.GetComponent<MiniGame>().maxRotDetect = maxRotDetect;
                         Panel.GetComponent<MiniGame>().range = range;
-                        PlayerPack.SetActive(false);
+                       // PlayerPack.SetActive(false);
                         Panel.SetActive(true);
                     }
 
