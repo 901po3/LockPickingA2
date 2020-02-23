@@ -58,7 +58,7 @@ public class Move : MovingStateData
             if (charControl.isMovingForward && !CheckEdge(charControl, charControl.frontSpheres, charControl.transform.forward))
                 charControl.transform.Translate(Vector3.forward * curSpeed * Time.deltaTime);
             else if (charControl.isMovingBackward && !CheckEdge(charControl, charControl.backSpheres, -charControl.transform.forward))
-                charControl.transform.Translate(Vector3.back * curSpeed * Time.deltaTime);
+                charControl.transform.Translate(Vector3.back * curSpeed* Time.deltaTime);
             if (charControl.isMovingRight && !CheckEdge(charControl, charControl.rightSpheres, charControl.transform.right))
                 charControl.transform.Translate(Vector3.right * curSpeed * Time.deltaTime);
             else if (charControl.isMovingLeft && !CheckEdge(charControl, charControl.leftSpheres, -charControl.transform.right))
