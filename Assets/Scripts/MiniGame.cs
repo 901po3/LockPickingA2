@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
-    public GameObject PlayerPack;
+    public GameObject Player;
     public bool miniGameOn = false;
     public GameObject lockPick;
     Vector3 lockPickPos;
@@ -78,6 +78,6 @@ public class MiniGame : MonoBehaviour
     {
         miniGameOn = false;
         gameObject.SetActive(false);
-        //PlayerPack.SetActive(true);
+        Player.GetComponent<CharacterControl>().isLockPicking = false;
     }
 }

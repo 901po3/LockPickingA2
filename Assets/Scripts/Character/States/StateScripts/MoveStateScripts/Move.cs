@@ -13,6 +13,7 @@ public class Move : MovingStateData
     public override void UpdateAbility(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
     {
         CharacterControl charControl = characterState.GetCharacterControl(animator);
+        if (charControl.isLockPicking) return;
 
         if (charControl.isJumping)
         {
