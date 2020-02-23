@@ -25,7 +25,7 @@ public class MiniGame : MonoBehaviour
     {
         gameObject.SetActive(false);
         audio = GetComponent<AudioSource>();
-        lockPickPos = lockPick.transform.position;
+        lockPickPos = lockPick.transform.localPosition;
         unlockingAngle = Random.Range(5, 176);
     }
 
@@ -70,6 +70,7 @@ public class MiniGame : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.E))
         {
+            lockPick.transform.localPosition = lockPickPos;
             if (audio.isPlaying)
             {
                 audio.Stop();
@@ -96,7 +97,7 @@ public class MiniGame : MonoBehaviour
     private void Vibration()
     {
         Vector3 temp = new Vector3(lockPickPos.x + Random.Range(-5, 5), lockPickPos.y + Random.Range(-5, 5), lockPickPos.z);
-        lockPick.transform.position = Vector3.Lerp(lockPick.transform.position, temp, Time.deltaTime * 50);
+        lockPick.transform.localPosition = Vector3.Lerp(lockPick.transform.localPosition, temp, Time.deltaTime * 50);
     }
 
 
