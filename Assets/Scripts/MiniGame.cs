@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
-    public Text LockPickNumberText;
     public GameObject LockPickDisplayPanel;
     public GameObject Player;
     public bool miniGameOn = false;
@@ -124,7 +123,6 @@ public class MiniGame : MonoBehaviour
         Player.GetComponent<CharacterControl>().NumberOfLockpicks -= 1;
         if (Player.GetComponent<CharacterControl>().NumberOfLockpicks < 0)
             Player.GetComponent<CharacterControl>().NumberOfLockpicks = 0;
-        LockPickNumberText.text = "X " + Player.GetComponent<CharacterControl>().NumberOfLockpicks.ToString();
         AbortButton();
     }
 
