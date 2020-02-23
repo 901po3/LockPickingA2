@@ -17,26 +17,25 @@ public class DoorCheck : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (other.transform.tag == "Player")
         {
-            if (other.transform.tag == "Player")
+            if (!Panel.GetComponent<MiniGame>().miniGameOn)
             {
-                if(!Panel.GetComponent<MiniGame>().miniGameOn)
+                EKeyImage.SetActive(true);
+                if (Input.GetKey(KeyCode.E) && Player.GetComponent<CharacterControl>().NumberOfLockpicks > 0)
                 {
-                    EKeyImage.SetActive(true);
-                    if (Input.GetKey(KeyCode.E) && Player.GetComponent<CharacterControl>().NumberOfLockpicks > 0)
-                    {
-                        MiniGame miniGame = Panel.GetComponent<MiniGame>();
-                        miniGame.miniGameOn = true;
-                        miniGame.maxRotDetect = maxRotDetect;
-                        miniGame.range = range;
-                        miniGame.timer = timer;
-                        miniGame.unlockingAngle = Random.Range(5, 176);
-                        Player.GetComponent<CharacterControl>().isLockPicking = true;
-                        LockPickDisplayPanel.SetActive(false);
-                        Panel.SetActive(true);
-                    }
-
+                    MiniGame miniGame = Panel.GetComponent<MiniGame>();
+                    miniGame.miniGameOn = true;
+                    miniGame.maxRotDetect = maxRotDetect;
+                    miniGame.range = range;
+                    miniGame.timer = timer;
+                    miniGame.unlockingAngle = Random.Range(5, 176);
+                    miniGame.door = gameObject;
+                    Player.GetComponent<CharacterControl>().isLockPicking = true;
+                    LockPickDisplayPanel.SetActive(false);
+                    Panel.SetActive(true);
                 }
+
             }
         }
     }
@@ -47,6 +46,11 @@ public class DoorCheck : MonoBehaviour
         {
             EKeyImage.SetActive(false);
         }
+    }
+
+    private void OnDestroy()
+    {
+        EKeyImage.SetActive(false);
     }
 
 }

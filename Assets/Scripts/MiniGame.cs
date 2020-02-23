@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
+    public GameObject door;
     public GameObject LockPickDisplayPanel;
     public GameObject Player;
     public bool miniGameOn = false;
@@ -21,9 +22,10 @@ public class MiniGame : MonoBehaviour
 
     AudioSource audio;
     public bool isStuck = true;
+    public bool unlocked = false;
     public AudioClip LockpickingStuck;
-    [Range(5, 175)]
     public AudioClip LockpickingTurn;
+    public AudioClip LockpickingOpen;
 
     private void Awake()
     {
@@ -46,61 +48,96 @@ public class MiniGame : MonoBehaviour
 
     private void LockPicking()
     {
-        lockPick.transform.eulerAngles = Vector3.forward * 180 * Mathf.Clamp((Input.mousePosition.x / Screen.width), 0.01f, 0.99f);
-        lockPick.transform.eulerAngles = Vector3.forward * Mathf.Clamp(lockPick.transform.eulerAngles.z, 0, 180);
+        if(!unlocked)
+        {
+            lockPick.transform.eulerAngles = Vector3.forward * 180 * Mathf.Clamp((Input.mousePosition.x / Screen.width), 0.01f, 0.99f);
+            lockPick.transform.eulerAngles = Vector3.forward * Mathf.Clamp(lockPick.transform.eulerAngles.z, 0, 180);
 
-        if(lockPick.transform.eulerAngles.z >= unlockingAngle - range && lockPick.transform.eulerAngles.z <= unlockingAngle + range)
-        {
-            isStuck = false;
-        }
-        else
-        {
-            isStuck = true;
-        }
+            if (lockPick.transform.eulerAngles.z >= unlockingAngle - range && lockPick.transform.eulerAngles.z <= unlockingAngle + range)
+            {
+                isStuck = false;
+            }
+            else
+            {
+                isStuck = true;
+            }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (isStuck)
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                audio.clip = LockpickingStuck;
-                audio.Play();
+                if (isStuck)
+                {
+                    audio.clip = LockpickingStuck;
+                    audio.Play();
+                }
+                else if (!isStuck)
+                {
+                    audio.clip = LockpickingTurn;
+                    audio.Play();
+                }
             }
-            else if(!isStuck)
+            else if (Input.GetKeyUp(KeyCode.R))
             {
-                audio.clip = LockpickingTurn;
-                audio.Play();
+                lockPick.transform.localPosition = lockPickPos;
+                lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                lockPick.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                if (audio.isPlaying)
+                {
+                    audio.Stop();
+                }
+            }
+            if (Input.GetKey(KeyCode.R))
+            {
+                if (isStuck && audio.clip == LockpickingTurn)
+                {
+                    audio.Stop();
+                    audio.clip = LockpickingStuck;
+                    audio.Play();
+                }
+                if (!isStuck && audio.clip == LockpickingStuck)
+                {
+                    audio.Stop();
+                    audio.clip = LockpickingTurn;
+                    audio.Play();
+                }
+                Vibration();
+                if (!isStuck)
+                {
+                    lockFrame.transform.Rotate(Vector3.forward * 90 * Time.deltaTime, Space.World);
+                    if (lockFrame.transform.localEulerAngles.z >= 180)
+                    {
+                        unlocked = true;
+                    }
+                }
             }
         }
-        else if (Input.GetKeyUp(KeyCode.R))
+        if(unlocked)
         {
-            lockPick.transform.localPosition = lockPickPos;
-            lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            lockPick.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            if (audio.isPlaying)
+            if(audio.clip != LockpickingOpen)
             {
-                audio.Stop();
-            }
-        }
-        if(Input.GetKey(KeyCode.R))
-        {
-            if(!isStuck)
-            {
-                lockFrame.transform.Rotate(Vector3.forward * 30 * Time.deltaTime, Space.World);
-            }
-            if(isStuck && audio.clip == LockpickingTurn)
-            {
-                audio.Stop();
-                audio.clip = LockpickingStuck;
+                audio.loop = false;
+                audio.clip = LockpickingOpen;
                 audio.Play();
             }
-            if (!isStuck && audio.clip == LockpickingStuck)
-            {
-                audio.Stop();
-                audio.clip = LockpickingTurn;
-                audio.Play();
-            }
-            Vibration();
+            StartCoroutine(Open());
         }
+    }
+
+    IEnumerator Open()
+    {
+        yield return new WaitForSeconds(1.5f);
+        miniGameOn = false;
+        gameObject.SetActive(false);
+        Player.GetComponent<CharacterControl>().isLockPicking = false;
+        LockPickDisplayPanel.SetActive(true);
+        timerDelayOn = true;
+        audio.Stop();
+        audio.clip = null;
+        unlocked = false;
+        lockPick.transform.localPosition = lockPickPos;
+        lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        lockPick.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        Player.GetComponent<CharacterControl>().NumberOfLockpicks -= 1;
+        Destroy(door);
     }
 
     private void Timer()
@@ -146,13 +183,19 @@ public class MiniGame : MonoBehaviour
 
     public void AbortButton()
     {
-        miniGameOn = false;
-        gameObject.SetActive(false);
-        Player.GetComponent<CharacterControl>().isLockPicking = false;
-        LockPickDisplayPanel.SetActive(true);
-        timerDelayOn = true;
-        audio.Stop();
-        audio.clip = null;
+        if(!unlocked)
+        {
+            miniGameOn = false;
+            gameObject.SetActive(false);
+            Player.GetComponent<CharacterControl>().isLockPicking = false;
+            LockPickDisplayPanel.SetActive(true);
+            timerDelayOn = true;
+            audio.Stop();
+            audio.clip = null;
+            lockPick.transform.localPosition = lockPickPos;
+            lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            lockPick.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 
 }
