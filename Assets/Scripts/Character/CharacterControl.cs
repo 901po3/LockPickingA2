@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterControl : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class CharacterControl : MonoBehaviour
     public List<GameObject> rightSpheres = new List<GameObject>();
     public List<GameObject> leftSpheres = new List<GameObject>();
     public List<Collider> ragdollParts = new List<Collider>();
+
+    public Text LockPickNumberText;
+    public int NumberOfLockpicks = 3;
 
     public LedgeChecker ledgeChecker;
 
@@ -47,6 +51,7 @@ public class CharacterControl : MonoBehaviour
         SetRagdollParts();
         CreateAllSpheres();
         ledgeChecker = GetComponentInChildren<LedgeChecker>();
+        LockPickNumberText.text = "X " + NumberOfLockpicks.ToString();
     }
 
     private void SetRagdollParts()
@@ -86,6 +91,7 @@ public class CharacterControl : MonoBehaviour
             c.attachedRigidbody.velocity = Vector3.zero;
         }
     }
+
 
     private void FixedUpdate()
     {

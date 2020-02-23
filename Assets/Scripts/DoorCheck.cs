@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class DoorCheck : MonoBehaviour
 {
+    public GameObject LockPickDisplayPanel;
     public GameObject EKeyImage;
     public GameObject Panel;
     public GameObject Player;
@@ -12,6 +13,7 @@ public class DoorCheck : MonoBehaviour
 
     public float maxRotDetect;
     public float range;
+    public int timer;
 
     private void OnTriggerStay(Collider other)
     {
@@ -21,13 +23,16 @@ public class DoorCheck : MonoBehaviour
                 if(!Panel.GetComponent<MiniGame>().miniGameOn)
                 {
                     EKeyImage.SetActive(true);
-                    if (Input.GetKey(KeyCode.E))
+                    if (Input.GetKey(KeyCode.E) && Player.GetComponent<CharacterControl>().NumberOfLockpicks > 0)
                     {
-                        Panel.GetComponent<MiniGame>().miniGameOn = true;
-                        Panel.GetComponent<MiniGame>().maxRotDetect = maxRotDetect;
-                        Panel.GetComponent<MiniGame>().range = range;
+                        MiniGame miniGame = Panel.GetComponent<MiniGame>();
+                        miniGame.miniGameOn = true;
+                        miniGame.maxRotDetect = maxRotDetect;
+                        miniGame.range = range;
+                        miniGame.timer = timer;
+                        miniGame.unlockingAngle = Random.Range(5, 176);
                         Player.GetComponent<CharacterControl>().isLockPicking = true;
-                       // PlayerPack.SetActive(false);
+                        LockPickDisplayPanel.SetActive(false);
                         Panel.SetActive(true);
                     }
 

@@ -5,15 +5,20 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
+    public Text LockPickNumberText;
+    public GameObject LockPickDisplayPanel;
     public GameObject Player;
     public bool miniGameOn = false;
     public GameObject lockPick;
     public GameObject lockFrame;
+    public Text timerText;
     Vector3 lockPickPos;
 
+    public int timer;
+    private bool timerDelayOn = true;
     public float maxRotDetect;
     public float range;
-    private float unlockingAngle;
+    public float unlockingAngle;
 
     AudioSource audio;
     public bool isStuck = true;
@@ -26,7 +31,6 @@ public class MiniGame : MonoBehaviour
         gameObject.SetActive(false);
         audio = GetComponent<AudioSource>();
         lockPickPos = lockPick.transform.localPosition;
-        unlockingAngle = Random.Range(5, 176);
     }
 
     public GameObject EKeyButton;
@@ -37,6 +41,7 @@ public class MiniGame : MonoBehaviour
         {
             EKeyButton.SetActive(false);
             LockPicking();
+            Timer();
         }
     }
 
@@ -54,7 +59,7 @@ public class MiniGame : MonoBehaviour
             isStuck = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             if (isStuck)
             {
@@ -67,16 +72,17 @@ public class MiniGame : MonoBehaviour
                 audio.Play();
             }
         }
-        else if (Input.GetKeyUp(KeyCode.E))
+        else if (Input.GetKeyUp(KeyCode.R))
         {
             lockPick.transform.localPosition = lockPickPos;
             lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            lockPick.transform.localRotation = Quaternion.Euler(0, 0, 0);
             if (audio.isPlaying)
             {
                 audio.Stop();
             }
         }
-        if(Input.GetKey(KeyCode.E))
+        if(Input.GetKey(KeyCode.R))
         {
             if(!isStuck)
             {
@@ -98,6 +104,41 @@ public class MiniGame : MonoBehaviour
         }
     }
 
+    private void Timer()
+    {
+        if (timerDelayOn)
+        {
+            timerDelayOn = false;
+            StartCoroutine(ReduceTimer());
+        }
+        timerText.text = timer.ToString() + " Second(s)";
+        if(timer == 0)
+        {
+            StartCoroutine(Exit());
+        }
+    }
+
+    IEnumerator Exit()
+    {
+        yield return new WaitForSeconds(1.0f);
+        Player.GetComponent<CharacterControl>().NumberOfLockpicks -= 1;
+        if (Player.GetComponent<CharacterControl>().NumberOfLockpicks < 0)
+            Player.GetComponent<CharacterControl>().NumberOfLockpicks = 0;
+        LockPickNumberText.text = "X " + Player.GetComponent<CharacterControl>().NumberOfLockpicks.ToString();
+        AbortButton();
+    }
+
+    IEnumerator ReduceTimer()
+    {
+        yield return new WaitForSeconds(1f);
+        timerDelayOn = true;
+        timer -= 1;
+        if(timer < 0)
+        {
+            timer = 0;
+        }
+    }
+
     private void Vibration()
     {
         Vector3 temp = new Vector3(lockPickPos.x + Random.Range(-5, 5), lockPickPos.y + Random.Range(-5, 5), lockPickPos.z);
@@ -110,5 +151,10 @@ public class MiniGame : MonoBehaviour
         miniGameOn = false;
         gameObject.SetActive(false);
         Player.GetComponent<CharacterControl>().isLockPicking = false;
+        LockPickDisplayPanel.SetActive(true);
+        timerDelayOn = true;
+        audio.Stop();
+        audio.clip = null;
     }
+
 }
