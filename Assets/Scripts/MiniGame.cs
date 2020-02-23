@@ -8,14 +8,17 @@ public class MiniGame : MonoBehaviour
     public GameObject Player;
     public bool miniGameOn = false;
     public GameObject lockPick;
+    public GameObject lockFrame;
     Vector3 lockPickPos;
 
     public float maxRotDetect;
     public float range;
+    private float unlockingAngle;
 
     AudioSource audio;
     public bool isStuck = true;
     public AudioClip LockpickingStuck;
+    [Range(5, 175)]
     public AudioClip LockpickingTurn;
 
     private void Awake()
@@ -23,6 +26,7 @@ public class MiniGame : MonoBehaviour
         gameObject.SetActive(false);
         audio = GetComponent<AudioSource>();
         lockPickPos = lockPick.transform.position;
+        unlockingAngle = Random.Range(5, 176);
     }
 
     public GameObject EKeyButton;
@@ -41,29 +45,51 @@ public class MiniGame : MonoBehaviour
         lockPick.transform.eulerAngles = Vector3.forward * 180 * Mathf.Clamp((Input.mousePosition.x / Screen.width), 0.01f, 0.99f);
         lockPick.transform.eulerAngles = Vector3.forward * Mathf.Clamp(lockPick.transform.eulerAngles.z, 0, 180);
 
-        if(isStuck)
+        if(lockPick.transform.eulerAngles.z >= unlockingAngle - range && lockPick.transform.eulerAngles.z <= unlockingAngle + range)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            isStuck = false;
+            lockFrame.transform.Rotate(Vector3.forward * 30 * Time.deltaTime, Space.World);
+        }
+        else
+        {
+            isStuck = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (isStuck)
             {
-                if (audio.clip != LockpickingStuck)
-                {
-                    audio.clip = LockpickingStuck;
-                    audio.Play();
-                }
+                audio.clip = LockpickingStuck;
+                audio.Play();
             }
-            else if (Input.GetKeyUp(KeyCode.E))
+            else if(!isStuck)
             {
-                if (audio.clip == LockpickingStuck && audio.isPlaying)
-                {
-                    audio.Stop();
-                    lockPick.transform.position = lockPickPos;
-                    audio.clip = null;
-                }
+                audio.clip = LockpickingTurn;
+                audio.Play();
             }
-            else if(Input.GetKey(KeyCode.E))
+        }
+        else if (Input.GetKeyUp(KeyCode.E))
+        {
+            if (audio.isPlaying)
             {
-                Vibration();
+                audio.Stop();
             }
+        }
+        if(Input.GetKey(KeyCode.E))
+        {
+            if(isStuck && audio.clip == LockpickingTurn)
+            {
+                audio.Stop();
+                audio.clip = LockpickingTurn;
+                audio.Play();
+            }
+            if (!isStuck && audio.clip == LockpickingStuck)
+            {
+                audio.Stop();
+                audio.clip = LockpickingStuck;
+                audio.Play();
+            }
+            Vibration();
         }
     }
 
