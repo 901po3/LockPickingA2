@@ -185,7 +185,7 @@ public class LPLockActivator : MonoBehaviour
 
                 // Set player rotation to dummy rotation
                 playerObject.transform.eulerAngles = Vector3.up * playerDummy.transform.eulerAngles.y;
-                Camera.main.transform.localEulerAngles = Vector3.right * playerDummy.transform.localEulerAngles.x;
+                //Camera.main.transform.localEulerAngles = Vector3.right * playerDummy.transform.localEulerAngles.x;
             }
 
             //StartCoroutine("Reposition");
@@ -275,7 +275,7 @@ public class LPLockActivator : MonoBehaviour
                 playerObject.transform.position = Vector3.Slerp(playerObject.transform.position, playerDummy.position, 1);
 
                 // Transition to the dummy rotation
-                Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, playerDummy.rotation, 1);
+                //Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, playerDummy.rotation, 1);
 
                 // Wait a frame between transition increments
                 timeOut -= Time.deltaTime;
