@@ -48,7 +48,6 @@ public class MiniGame : MonoBehaviour
         if(lockPick.transform.eulerAngles.z >= unlockingAngle - range && lockPick.transform.eulerAngles.z <= unlockingAngle + range)
         {
             isStuck = false;
-            lockFrame.transform.Rotate(Vector3.forward * 30 * Time.deltaTime, Space.World);
         }
         else
         {
@@ -71,6 +70,7 @@ public class MiniGame : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.E))
         {
             lockPick.transform.localPosition = lockPickPos;
+            lockFrame.transform.localRotation = Quaternion.Euler(0, 0, 0);
             if (audio.isPlaying)
             {
                 audio.Stop();
@@ -78,16 +78,20 @@ public class MiniGame : MonoBehaviour
         }
         if(Input.GetKey(KeyCode.E))
         {
+            if(!isStuck)
+            {
+                lockFrame.transform.Rotate(Vector3.forward * 30 * Time.deltaTime, Space.World);
+            }
             if(isStuck && audio.clip == LockpickingTurn)
             {
                 audio.Stop();
-                audio.clip = LockpickingTurn;
+                audio.clip = LockpickingStuck;
                 audio.Play();
             }
             if (!isStuck && audio.clip == LockpickingStuck)
             {
                 audio.Stop();
-                audio.clip = LockpickingStuck;
+                audio.clip = LockpickingTurn;
                 audio.Play();
             }
             Vibration();
