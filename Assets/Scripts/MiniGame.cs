@@ -5,10 +5,13 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
+    public GameObject PlayerPack;
     public bool miniGameOn = false;
     public GameObject lockPick;
-    public Vector3 lockPickPos;
+    Vector3 lockPickPos;
 
+    public float maxRotDetect;
+    public float range;
 
     AudioSource audio;
     public bool isStuck = true;
@@ -75,5 +78,6 @@ public class MiniGame : MonoBehaviour
     {
         miniGameOn = false;
         gameObject.SetActive(false);
+        PlayerPack.SetActive(true);
     }
 }

@@ -8,6 +8,10 @@ public class DoorCheck : MonoBehaviour
     public GameObject EKeyImage;
     public GameObject Panel;
     public GameObject Player;
+    public GameObject PlayerPack;
+
+    public float maxRotDetect;
+    public float range;
 
     private void OnTriggerStay(Collider other)
     {
@@ -20,6 +24,9 @@ public class DoorCheck : MonoBehaviour
                     if (Input.GetKey(KeyCode.E))
                     {
                         Panel.GetComponent<MiniGame>().miniGameOn = true;
+                        Panel.GetComponent<MiniGame>().maxRotDetect = maxRotDetect;
+                        Panel.GetComponent<MiniGame>().range = range;
+                        PlayerPack.SetActive(false);
                         Panel.SetActive(true);
                     }
 
