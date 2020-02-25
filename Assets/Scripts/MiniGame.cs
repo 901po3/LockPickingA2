@@ -31,6 +31,7 @@ public class MiniGame : MonoBehaviour
     {
         gameObject.SetActive(false);
         audio = GetComponent<AudioSource>();
+        audio.loop = true;
         lockPickPos = lockPick.transform.localPosition;
     }
 

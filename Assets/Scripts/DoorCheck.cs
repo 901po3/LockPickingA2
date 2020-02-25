@@ -48,9 +48,5 @@ public class DoorCheck : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        EKeyImage.SetActive(false);
-    }
 
 }
